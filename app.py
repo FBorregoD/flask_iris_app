@@ -1,3 +1,7 @@
+'''
+Doc string
+'''
+
 from flask import Flask, session, url_for, render_template, redirect
 import joblib
 
@@ -9,6 +13,10 @@ encoder_loaded = joblib.load("saved_models/iris_label_encoder.pkl")
 
 # Creamos la función de predicción
 def make_prediction(model, encoder, sample_json):
+    '''
+    Doc string
+    '''
+
     SepalLengthCm = sample_json['SepalLengthCm']
     SepalWidthCm = sample_json['SepalWidthCm']
     PetalLengthCm = sample_json['PetalLengthCm']

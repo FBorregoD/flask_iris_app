@@ -1,0 +1,56 @@
+# Python package
+# texto
+
+pool:
+  vmImage: 'Ubuntu 20.04'
+
+# variables
+# - group: <nombre-grupo-variables1>
+# - group: <nombre-grupo-variables2>
+
+trigger:
+- master
+- main
+- releases/*
+
+ame: 'python test'
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.10.4'
+    architecture: 'x64'
+
+- task: Bash@3
+  displayName: 'Install Requirements'
+  inputs:
+    targetType: filePath
+    filePath: 'environment_setup/install_requirements.sh'
+    workingDirectory: 'environment_setup'
+
+- bash: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: 'Add conda to PATH'
+
+- script: conda env create --quiet --force -k --file environment_setup/environment.yml
+  displayName: Create Anaconda environment
+
+# - bash: source activate iris-flask
+#   displayName: Activate Anaconda environment
+
+- bash: |
+    source activate iris-flask
+    pylint app.py --exit-zero
+  displayName: 'Check Pylint test'
+  failOnStderr: false
+  continueOnError: true
+
+- bash: |
+    source activate iris-flask
+    python test_ml.py --help
+  displayName: 'Test ML Iris'
+
+- task: PublishTestResults@1
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '$(Build.BinariesDirectory)/*_report.xml'
+    testRunTitle: 'Publish test results'
+ 
