@@ -13,7 +13,7 @@ trigger:
 - main
 - releases/*
 
-ame: 'python test'
+Name: 'python test'
 steps:
 - task: UsePythonVersion@0
   inputs:
